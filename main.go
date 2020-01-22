@@ -6,7 +6,9 @@ import (
     "strings"
     "strconv"
     "os"
+    "errors"
 )
+
 
 func readData() (data []byte, err error) {
     read, err := ioutil.ReadFile("./input.txt")
@@ -17,9 +19,11 @@ func readData() (data []byte, err error) {
     return
 }
 
-func createArgs(d []byte) (data []string, err error) {
-    args := strings.Fields(string(d))
-    data = args
+func createArgs(d []byte) (args []string, err error) {
+    args = strings.Fields(string(d))
+    if len(args) == 0 {
+        err = errors.New("NO DATA WAS FOUND")
+    } 
     return
 }
 
@@ -32,10 +36,16 @@ func convInt(a []string) (v []int, err error) {
     }
     return
 }
-
+ 
 func sumArgs(args []int) (sum int, err error) {
     sum = 0
     for _, num := range args {
+        var n interface{} = num
+        _, ok := n.(int)
+        if ok != true  {
+            err = errors.New("CANNOT SUM NON INTEGERS") 
+            return
+        }
         sum += num
     }
     return
